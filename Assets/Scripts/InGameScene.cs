@@ -19,6 +19,7 @@ public class InGameScene : MonoBehaviour
 
     public int m_countX = 10;
     public int m_countY = 10;
+    public int m_maxMineCount = 10;
 
     private Dictionary<KeyValuePair<int, int>, LandMineController> m_pentagons = new Dictionary<KeyValuePair<int, int>, LandMineController>();
     private Dictionary<KeyValuePair<int, int>, LandMineController> m_hexagons = new Dictionary<KeyValuePair<int, int>, LandMineController>();
@@ -28,6 +29,7 @@ public class InGameScene : MonoBehaviour
     {
         bool isReverse = false;
         bool isIndent = true;
+        int curMineCount = 0;
 
         for (int y = 0; y < m_countY; ++y)
         {
@@ -37,8 +39,10 @@ public class InGameScene : MonoBehaviour
             for (int x = 0; x < CountX; ++x)
             {
                 Vector3 pos = Vector3.zero;
-                bool isMine = (0.5f >= Random.Range(0f, 1f));
+                bool isMine = (0.7f <= Random.Range(0f, 1f) && curMineCount < m_maxMineCount);
                 LandMineController controller = null;
+
+                curMineCount = (true == isMine) ? curMineCount + 1 : curMineCount;
 
                 switch (shape)
                 {
@@ -157,9 +161,80 @@ public class InGameScene : MonoBehaviour
         }
         else
         {
+            int myX = controller.GetX();
+            int myY = controller.GetY();
+            if (m_pentagons.ContainsKey(new KeyValuePair<int, int>(myX - 1, myY)))
+            {
+                list.Add(m_pentagons[new KeyValuePair<int, int>(myX - 1, myY)]);
+            }
 
+            if (m_pentagons.ContainsKey(new KeyValuePair<int, int>(myX + 1, myY)))
+            {
+                list.Add(m_pentagons[new KeyValuePair<int, int>(myX + 1, myY)]);
+            }
+
+            int hexStartX = (0 == myX % 2) ? (myX / 2) - 1 : myX / 2;
+            if (true == controller.IsReverse())
+            {
+                if (m_hexagons.ContainsKey(new KeyValuePair<int, int>(myX / 2, myY + 1)))
+                {
+                    list.Add(m_hexagons[new KeyValuePair<int, int>(myX / 2, myY + 1)]);
+                }
+
+                for (int x = hexStartX; x < hexStartX + 2; ++x)
+                {
+                    if (m_hexagons.ContainsKey(new KeyValuePair<int, int>(x, myY - 1)))
+                    {
+                        list.Add(m_hexagons[new KeyValuePair<int, int>(x, myY - 1)]);
+                    }
+                }
+            }
+            else
+            {
+                if (m_hexagons.ContainsKey(new KeyValuePair<int, int>(myX / 2, myY - 1)))
+                {
+                    list.Add(m_hexagons[new KeyValuePair<int, int>(myX / 2, myY - 1)]);
+                }
+
+                for (int x = hexStartX; x < hexStartX + 2; ++x)
+                {
+                    if (m_hexagons.ContainsKey(new KeyValuePair<int, int>(x, myY + 1)))
+                    {
+                        list.Add(m_hexagons[new KeyValuePair<int, int>(x, myY + 1)]);
+                    }
+                }
+            }
         }
 
         return list;
+    }
+
+    private void Update()
+    {
+        foreach (var pair in m_hexagons)
+        {
+            var hex = pair.Value;
+            if (false == hex.IsMine() && false == hex.IsCurvered() && 0 == hex.GetNumber())
+            {
+                var near = GetNearLandMine(hex);
+                foreach (var nearController in near)
+                {
+                    nearController.DisableCurver();
+                }
+            }
+        }
+
+        foreach (var pair in m_pentagons)
+        {
+            var penta = pair.Value;
+            if (false == penta.IsMine() && false == penta.IsCurvered() && 0 == penta.GetNumber())
+            {
+                var near = GetNearLandMine(penta);
+                foreach (var nearController in near)
+                {
+                    nearController.DisableCurver();
+                }
+            }
+        }
     }
 }

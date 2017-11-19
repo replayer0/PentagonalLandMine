@@ -239,6 +239,7 @@ MonoBehaviour:
   m_isMine: 0
   m_x: 0
   m_y: 0
+  m_isReverse: 0
 --- !u!114 &114550413287315764
 MonoBehaviour:
   m_ObjectHideFlags: 1

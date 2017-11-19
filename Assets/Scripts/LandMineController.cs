@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -54,6 +55,11 @@ public class LandMineController : MonoBehaviour
         Number.gameObject.SetActive(0 != num);
     }
 
+    public int GetNumber()
+    {
+        return Int32.Parse(Number.text);
+    }
+
     public void SetX(int x)
     {
         m_x = x;
@@ -82,5 +88,15 @@ public class LandMineController : MonoBehaviour
     public bool IsReverse()
     {
         return m_isReverse;
+    }
+
+    public void DisableCurver()
+    {
+        Curver.SetActive(false);
+    }
+
+    public bool IsCurvered()
+    {
+        return Curver.activeInHierarchy;
     }
 }
