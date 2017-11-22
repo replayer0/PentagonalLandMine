@@ -313,6 +313,7 @@ MonoBehaviour:
   m_parent: {fileID: 1416504554}
   m_countX: 10
   m_countY: 10
+  m_maxMineCount: 10
 --- !u!1 &1595431766
 GameObject:
   m_ObjectHideFlags: 0
