@@ -45,7 +45,7 @@ public class LandMineController : MonoBehaviour
 
         // random color
         var spriteRenderer = Cover.GetComponent<SpriteRenderer>();
-        spriteRenderer.color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f));
+        //spriteRenderer.color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f));
     }
 
     private void OnMouseDown()
