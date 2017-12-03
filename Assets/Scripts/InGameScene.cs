@@ -19,17 +19,38 @@ public class InGameScene : MonoBehaviour
 
     public int m_countX = 10;
     public int m_countY = 10;
-    public int m_maxMineCount = 10;
+    public int m_maxMineCount = 20;
 
     private Dictionary<KeyValuePair<int, int>, LandMineController> m_pentagons = new Dictionary<KeyValuePair<int, int>, LandMineController>();
     private Dictionary<KeyValuePair<int, int>, LandMineController> m_hexagons = new Dictionary<KeyValuePair<int, int>, LandMineController>();
-    
+
+    private void GenerateMine(out HashSet<KeyValuePair<int, int>> minePos)
+    {
+        minePos = new HashSet<KeyValuePair<int, int>>();
+
+        Random.InitState((int)System.DateTime.Now.Ticks);
+
+        int curMineCount = 0;
+        while (m_maxMineCount > curMineCount)
+        {
+            int x = Random.Range(0, m_countX);
+            int y = Random.Range(0, m_countY);
+
+            if (!minePos.Contains(new KeyValuePair<int, int>(x, y)))
+            {
+                minePos.Add(new KeyValuePair<int, int>(x, y));
+                ++curMineCount;
+            }
+        }
+    }
 
     private void Start()
     {
         bool isReverse = false;
         bool isIndent = true;
-        int curMineCount = 0;
+
+        HashSet<KeyValuePair<int, int>> minePos;
+        GenerateMine(out minePos);
 
         for (int y = 0; y < m_countY; ++y)
         {
@@ -39,17 +60,14 @@ public class InGameScene : MonoBehaviour
             for (int x = 0; x < CountX; ++x)
             {
                 Vector3 pos = Vector3.zero;
-                bool isMine = (0.7f <= Random.Range(0f, 1f) && curMineCount < m_maxMineCount);
                 LandMineController controller = null;
-
-                curMineCount = (true == isMine) ? curMineCount + 1 : curMineCount;
 
                 switch (shape)
                 {
                     case SHAPE.HEXAGON:
                         {
-                            float posX = (true == isIndent) ? x * m_hexagon.GetWitdh() : x * m_hexagon.GetWitdh() + (m_hexagon.GetWitdh() / 2f);
-                            float posY = y * m_hexagon.GetHeight() - m_hexagon.GetReverseHeight();
+                            float posX = (true == isIndent) ? x * m_hexagon.Width : x * m_hexagon.Width + (m_hexagon.Width / 2f);
+                            float posY = y * m_hexagon.Height - m_hexagon.ReverseHeight;
 
                             pos = new Vector3(posX, posY, 0f);
                             controller = GameObject.Instantiate<LandMineController>(m_hexagon, pos, Quaternion.identity, m_parent.transform);
@@ -59,26 +77,24 @@ public class InGameScene : MonoBehaviour
 
                     case SHAPE.PENTAGON:
                         {
-                            float posX = x * m_pentagon.GetWitdh();
+                            float posX = x * m_pentagon.Width;
                             float posY = (true == reverse)
-                                ? y * m_pentagon.GetHeight() - m_pentagon.GetReverseHeight()
-                                : y * m_pentagon.GetHeight();
+                                ? y * m_pentagon.Height - m_pentagon.ReverseHeight
+                                : y * m_pentagon.Height;
 
                             pos = new Vector3(posX, posY, 0f);
                             controller = GameObject.Instantiate<LandMineController>(m_pentagon, pos, Quaternion.identity, m_parent.transform);
                             if (true == reverse)
                             {
                                 controller.transform.Rotate(new Vector3(0, 0, 180f));
-                                controller.SetReverse(true);
                             }
                             m_pentagons.Add(new KeyValuePair<int, int>(x, y), controller);
                         }
                         break;
                 }
 
-                controller.SetMine(isMine);
-                controller.SetX(x);
-                controller.SetY(y);
+                var isMine = minePos.Contains(new KeyValuePair<int, int>(x, y));
+                controller.Initialize(isMine, x, y, reverse);
 
                 reverse = !reverse;
             }
@@ -93,14 +109,14 @@ public class InGameScene : MonoBehaviour
         foreach (var pair in m_hexagons)
         {
             var hex = pair.Value;
-            if (false == hex.IsMine())
+            if (false == hex.IsMine)
             {
                 var near = GetNearLandMine(hex);
                 int num = 0;
 
                 foreach (var mine in near)
                 {
-                    if (true == mine.IsMine())
+                    if (true == mine.IsMine)
                     {
                         ++num;
                     }
@@ -117,14 +133,14 @@ public class InGameScene : MonoBehaviour
         foreach (var pair in m_pentagons)
         {
             var penta = pair.Value;
-            if (false == penta.IsMine())
+            if (false == penta.IsMine)
             {
                 var near = GetNearLandMine(penta);
                 int num = 0;
 
                 foreach (var mine in near)
                 {
-                    if (true == mine.IsMine())
+                    if (true == mine.IsMine)
                     {
                         ++num;
                     }
@@ -145,24 +161,24 @@ public class InGameScene : MonoBehaviour
 
         if (SHAPE.HEXAGON == controller.Shape)
         {
-            int startX = (0 == controller.GetY() % 4) ? controller.GetX() * 2 - 1 : controller.GetX() * 2;
+            int startX = (0 == controller.Y % 4) ? controller.X * 2 - 1 : controller.X * 2;
             for (int x = startX; x < startX + 3; ++x)
             {
-                if (m_pentagons.ContainsKey(new KeyValuePair<int, int>(x, controller.GetY() + 1)))
+                if (m_pentagons.ContainsKey(new KeyValuePair<int, int>(x, controller.Y + 1)))
                 {
-                    list.Add(m_pentagons[new KeyValuePair<int, int>(x, controller.GetY() + 1)]);
+                    list.Add(m_pentagons[new KeyValuePair<int, int>(x, controller.Y + 1)]);
                 }
 
-                if (m_pentagons.ContainsKey(new KeyValuePair<int, int>(x, controller.GetY() - 1)))
+                if (m_pentagons.ContainsKey(new KeyValuePair<int, int>(x, controller.Y - 1)))
                 {
-                    list.Add(m_pentagons[new KeyValuePair<int, int>(x, controller.GetY() - 1)]);
+                    list.Add(m_pentagons[new KeyValuePair<int, int>(x, controller.Y - 1)]);
                 }
             }
         }
         else
         {
-            int myX = controller.GetX();
-            int myY = controller.GetY();
+            int myX = controller.X;
+            int myY = controller.Y;
             if (m_pentagons.ContainsKey(new KeyValuePair<int, int>(myX - 1, myY)))
             {
                 list.Add(m_pentagons[new KeyValuePair<int, int>(myX - 1, myY)]);
@@ -174,7 +190,7 @@ public class InGameScene : MonoBehaviour
             }
 
             int hexStartX = (0 == myX % 2) ? (myX / 2) - 1 : myX / 2;
-            if (true == controller.IsReverse())
+            if (true == controller.IsReverse)
             {
                 if (m_hexagons.ContainsKey(new KeyValuePair<int, int>(myX / 2, myY + 1)))
                 {
@@ -214,7 +230,7 @@ public class InGameScene : MonoBehaviour
         foreach (var pair in m_hexagons)
         {
             var hex = pair.Value;
-            if (false == hex.IsMine() && false == hex.IsCurvered() && 0 == hex.GetNumber())
+            if (false == hex.IsMine && false == hex.IsCurvered() && 0 == hex.GetNumber())
             {
                 var near = GetNearLandMine(hex);
                 foreach (var nearController in near)
@@ -227,7 +243,7 @@ public class InGameScene : MonoBehaviour
         foreach (var pair in m_pentagons)
         {
             var penta = pair.Value;
-            if (false == penta.IsMine() && false == penta.IsCurvered() && 0 == penta.GetNumber())
+            if (false == penta.IsMine && false == penta.IsCurvered() && 0 == penta.GetNumber())
             {
                 var near = GetNearLandMine(penta);
                 foreach (var nearController in near)

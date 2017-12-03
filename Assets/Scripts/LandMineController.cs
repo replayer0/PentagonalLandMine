@@ -5,47 +5,47 @@ using UnityEngine;
 
 public class LandMineController : MonoBehaviour
 {
+    // inspector
     public SHAPE Shape = SHAPE.PENTAGON;
     public GameObject LandMineImage = null;
     public GameObject Curver = null;
     public TextMesh Number = null;
-    public float m_width = 1f;
-    public float m_height = 1f;
-    public float m_reverseHeight = 1f;
-    public bool m_isMine = false;
+    [SerializeField] private float m_width = 1f;
+    [SerializeField] private float m_height = 1f;
+    [SerializeField] private float m_reverseHeight = 1f;
 
-    public int m_x, m_y = 0;
-    public bool m_isReverse = false;
+    //
+    public float Width { get { return m_width; } }
+    public float Height { get { return m_height; } }
+    public float ReverseHeight { get { return m_reverseHeight; } }
+    public bool IsMine { get; private set; }
+    public int X { get; private set; }
+    public int Y { get; private set; }
+    public bool IsReverse { get; private set; }
+
+    public LandMineController()
+    {
+        IsMine = false;
+        IsReverse = false;
+    }
+
+    public void Initialize(bool isMine, int x, int y, bool isReverse)
+    {
+        // set mine
+        LandMineImage.SetActive(isMine);
+        IsMine = isMine;
+
+        // set pos
+        X = x;
+        Y = y;
+
+        // set reverse
+        IsReverse = isReverse;
+    }
 
     private void OnMouseDown()
     {
-        Curver.SetActive(false);
-    }
-
-    public float GetWitdh()
-    {
-        return m_width;
-    }
-
-    public float GetHeight()
-    {
-        return m_height;
-    }
-
-    public float GetReverseHeight()
-    {
-        return m_reverseHeight;
-    }
-
-    public void SetMine(bool isMine)
-    {
-        LandMineImage.SetActive(isMine);
-        m_isMine = isMine;
-    }
-
-    public bool IsMine()
-    {
-        return m_isMine;
+        DisableCurver();
     }
 
     public void SetNumber(int num)
@@ -58,36 +58,6 @@ public class LandMineController : MonoBehaviour
     public int GetNumber()
     {
         return Int32.Parse(Number.text);
-    }
-
-    public void SetX(int x)
-    {
-        m_x = x;
-    }
-
-    public int GetX()
-    {
-        return m_x;
-    }
-
-    public void SetY(int y)
-    {
-        m_y = y;
-    }
-
-    public int GetY()
-    {
-        return m_y;
-    }
-
-    public void SetReverse(bool isReverse)
-    {
-        m_isReverse = isReverse;
-    }
-
-    public bool IsReverse()
-    {
-        return m_isReverse;
     }
 
     public void DisableCurver()
