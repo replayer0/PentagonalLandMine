@@ -8,7 +8,7 @@ public class LandMineController : MonoBehaviour
     // inspector
     public SHAPE Shape = SHAPE.PENTAGON;
     public GameObject LandMineImage = null;
-    public GameObject Curver = null;
+    public GameObject Cover = null;
     public TextMesh Number = null;
     [SerializeField] private float m_width = 1f;
     [SerializeField] private float m_height = 1f;
@@ -22,6 +22,7 @@ public class LandMineController : MonoBehaviour
     public int X { get; private set; }
     public int Y { get; private set; }
     public bool IsReverse { get; private set; }
+    private Vector3 m_mousePos = Vector3.zero;
 
     public LandMineController()
     {
@@ -41,13 +42,24 @@ public class LandMineController : MonoBehaviour
 
         // set reverse
         IsReverse = isReverse;
+
+        // random color
+        var spriteRenderer = Cover.GetComponent<SpriteRenderer>();
+        spriteRenderer.color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f));
     }
 
     private void OnMouseDown()
     {
-        if (!CameraController.Instance.IsDragging)
+        m_mousePos = Input.mousePosition;
+        Debug.Log(m_mousePos);
+    }
+
+    private void OnMouseUp()
+    {
+        Debug.Log(m_mousePos + " " + Input.mousePosition);
+        if (Input.mousePosition == m_mousePos)
         {
-            DisableCurver();
+            Uncover();
         }
     }
 
@@ -63,13 +75,18 @@ public class LandMineController : MonoBehaviour
         return Int32.Parse(Number.text);
     }
 
-    public void DisableCurver()
+    public void Uncover()
     {
-        Curver.SetActive(false);
+        Cover.SetActive(false);
+
+        if (IsMine)
+        {
+            InGameScene.Instance.Lose();
+        }
     }
 
-    public bool IsCurvered()
+    public bool IsCovered()
     {
-        return Curver.activeInHierarchy;
+        return Cover.activeInHierarchy;
     }
 }

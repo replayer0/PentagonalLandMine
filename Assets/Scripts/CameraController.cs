@@ -34,13 +34,12 @@ public class CameraController : Singleton<CameraController>
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Camera UPdate");
-            m_isDragging = true;
             m_oldPos = transform.position;
             m_panOrigin =  Camera.main.ScreenToViewportPoint(Input.mousePosition);
+            m_isDragging = true;
         }
 
-        if (Input.GetMouseButton(0) && IsDragging)
+        if (Input.GetMouseButton(0))
         {
             Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition) - m_panOrigin;
             transform.position = m_oldPos + -1 * pos * m_panSpeed;

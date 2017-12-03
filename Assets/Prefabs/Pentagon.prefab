@@ -113,7 +113,7 @@ Transform:
   m_GameObject: {fileID: 1571002517258992}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.5999999, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4508378652104596}
   m_RootOrder: 0
@@ -206,12 +206,12 @@ TextMesh:
   m_GameObject: {fileID: 1571002517258992}
   m_Text: 0
   m_OffsetZ: 5
-  m_CharacterSize: 1
+  m_CharacterSize: 0.3
   m_LineSpacing: 1
   m_Anchor: 4
   m_Alignment: 1
   m_TabSize: 4
-  m_FontSize: 0
+  m_FontSize: 40
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
@@ -231,7 +231,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Shape: 0
   LandMineImage: {fileID: 1767314798043892}
-  Curver: {fileID: 1418052775267482}
+  Cover: {fileID: 1418052775267482}
   Number: {fileID: 102537774176788798}
   m_width: 1.4
   m_height: 1.5
@@ -282,7 +282,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: dd30db166fa534649b582bb320f689a7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 48d7bcf170f287845b1b99c2275ad9a1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

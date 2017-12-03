@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum SHAPE
 {
@@ -8,7 +9,7 @@ public enum SHAPE
     HEXAGON,
 }
 
-public class InGameScene : MonoBehaviour
+public class InGameScene : Singleton<InGameScene>
 {
     /// <summary>
     /// GameObject
@@ -16,6 +17,8 @@ public class InGameScene : MonoBehaviour
     public LandMineController m_pentagon = null;
     public LandMineController m_hexagon = null;
     public GameObject m_parent = null;
+    public GameObject WinPanel = null;
+    public GameObject LosePanel = null;
 
     public int m_countX = 10;
     public int m_countY = 10;
@@ -24,24 +27,30 @@ public class InGameScene : MonoBehaviour
     private Dictionary<KeyValuePair<int, int>, LandMineController> m_pentagons = new Dictionary<KeyValuePair<int, int>, LandMineController>();
     private Dictionary<KeyValuePair<int, int>, LandMineController> m_hexagons = new Dictionary<KeyValuePair<int, int>, LandMineController>();
 
+    public InGameScene()
+    {
+        _instance = this;
+    }
+
     private void GenerateMine(out HashSet<KeyValuePair<int, int>> minePos)
     {
         minePos = new HashSet<KeyValuePair<int, int>>();
 
         Random.InitState((int)System.DateTime.Now.Ticks);
 
-        int curMineCount = 0;
-        while (m_maxMineCount > curMineCount)
+        while (m_maxMineCount > minePos.Count)
         {
-            int x = Random.Range(0, m_countX);
             int y = Random.Range(0, m_countY);
+            int x = 0;
+            x = (0 == y % 2) ? Random.Range(0, m_countX / 2) : Random.Range(0, m_countX);
 
             if (!minePos.Contains(new KeyValuePair<int, int>(x, y)))
             {
                 minePos.Add(new KeyValuePair<int, int>(x, y));
-                ++curMineCount;
             }
         }
+
+        Debug.Log(minePos.Count);
     }
 
     private void Start()
@@ -227,30 +236,72 @@ public class InGameScene : MonoBehaviour
 
     private void Update()
     {
+        // uncover  hex tile
         foreach (var pair in m_hexagons)
         {
             var hex = pair.Value;
-            if (false == hex.IsMine && false == hex.IsCurvered() && 0 == hex.GetNumber())
+            if (false == hex.IsMine && false == hex.IsCovered() && 0 == hex.GetNumber())
             {
                 var near = GetNearLandMine(hex);
                 foreach (var nearController in near)
                 {
-                    nearController.DisableCurver();
+                    nearController.Uncover();
                 }
+            }
+        }
+
+        // uncover  penta tile
+        foreach (var pair in m_pentagons)
+        {
+            var penta = pair.Value;
+            if (false == penta.IsMine && false == penta.IsCovered() && 0 == penta.GetNumber())
+            {
+                var near = GetNearLandMine(penta);
+                foreach (var nearController in near)
+                {
+                    nearController.Uncover();
+                }
+            }
+        }
+
+        // check win
+        int checkCount = 0;
+        foreach (var pair in m_hexagons)
+        {
+            var hex = pair.Value;
+            if (false == hex.IsMine && false == hex.IsCovered())
+            {
+                ++checkCount;
             }
         }
 
         foreach (var pair in m_pentagons)
         {
             var penta = pair.Value;
-            if (false == penta.IsMine && false == penta.IsCurvered() && 0 == penta.GetNumber())
+            if (false == penta.IsMine && false == penta.IsCovered())
             {
-                var near = GetNearLandMine(penta);
-                foreach (var nearController in near)
-                {
-                    nearController.DisableCurver();
-                }
+                ++checkCount;
             }
         }
+
+        if (m_maxMineCount + checkCount == m_hexagons.Count + m_pentagons.Count)
+        {
+            Win();
+        }
+    }
+
+    public void ChangeScene()
+    {
+        SceneManager.LoadScene("Title");
+    }
+
+    public void Lose()
+    {
+        LosePanel.SetActive(true);
+    }
+
+    public void Win()
+    {
+        WinPanel.SetActive(true);
     }
 }
