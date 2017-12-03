@@ -3,7 +3,7 @@ using System.Collections;
 
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
-    private static T _instance = null;
+    protected static T _instance = null;
     private static object _syncobj = new object();
     private static bool appIsClosing = false;
 

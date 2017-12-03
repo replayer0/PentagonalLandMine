@@ -49,7 +49,7 @@ public class GameManager : Singleton<GameManager>
     }
 
     readonly string STAGE_STRING = "stage";
-     private CustomLogHandler LOGGER = null;
+    private CustomLogHandler LOGGER = null;
 
     /// <summary>
     /// VARIABLE
@@ -62,7 +62,7 @@ public class GameManager : Singleton<GameManager>
 	void Start ()
     {
         LOGGER = new CustomLogHandler();
-        Debug.Log("test");
+        Debug.Log("Start");
     }
 
     public void Initialize()
@@ -78,6 +78,4 @@ public class GameManager : Singleton<GameManager>
     {
         PlayerPrefs.SetInt(STAGE_STRING, m_stage);
     }
-
-    
 }

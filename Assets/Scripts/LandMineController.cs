@@ -45,7 +45,10 @@ public class LandMineController : MonoBehaviour
 
     private void OnMouseDown()
     {
-        DisableCurver();
+        if (!CameraController.Instance.IsDragging)
+        {
+            DisableCurver();
+        }
     }
 
     public void SetNumber(int num)
