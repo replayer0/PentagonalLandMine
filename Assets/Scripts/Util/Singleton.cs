@@ -31,7 +31,10 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                         string goName = typeof(T).ToString();
                         GameObject go = GameObject.Find(goName);
                         if (go == null)
+                        {
                             go = new GameObject(goName);
+                            DontDestroyOnLoad(go);
+                        }
                         _instance = go.AddComponent<T>();
                     }
                 }

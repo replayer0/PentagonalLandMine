@@ -2,6 +2,19 @@
 using System.IO;
 using System;
 
+public class StageInfo
+{
+    public StageInfo(int x, int y, int landMine)
+    {
+        X = x;
+        Y = y;
+        LandMine = landMine;
+    }
+    public readonly int X;
+    public readonly int Y;
+    public readonly int LandMine;
+}
+
 public class CustomLogHandler : ILogHandler
 {
     private FileStream m_FileStream = null;
@@ -55,6 +68,7 @@ public class GameManager : Singleton<GameManager>
     /// VARIABLE
     /// </summary>
     private int m_stage = (int)STAGE_ENUM.DEFAULT_STAGE;
+    private StageInfo m_stageInfo;
 
     /// <summary>
     /// FUNCTION
@@ -77,5 +91,15 @@ public class GameManager : Singleton<GameManager>
     public void Load()
     {
         PlayerPrefs.SetInt(STAGE_STRING, m_stage);
+    }
+
+    public void SetStageInfo(int x, int y, int landMine)
+    {
+        m_stageInfo = new StageInfo(x, y, landMine);
+    }
+
+    public StageInfo GetStageInfo()
+    {
+        return m_stageInfo;
     }
 }

@@ -63,6 +63,14 @@ public class InGameScene : Singleton<InGameScene>
         m_pentagons.Clear();
         m_hexagons.Clear();
 
+        var stageInfo = GameManager.Instance.GetStageInfo();
+        if (null != stageInfo)
+        {
+            m_countX = stageInfo.X;
+            m_countY = stageInfo.Y;
+            m_maxMineCount = stageInfo.LandMine;
+        }
+
         bool isReverse = false;
         bool isIndent = true;
 

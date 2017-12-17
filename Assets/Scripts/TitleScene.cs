@@ -12,6 +12,6 @@ public class TitleScene : MonoBehaviour
 	
 	public void ChangeScene()
     {
-        SceneManager.LoadScene("InGame");
+        SceneManager.LoadScene("Stage");
     }
 }
