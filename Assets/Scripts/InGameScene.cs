@@ -19,6 +19,7 @@ public class InGameScene : Singleton<InGameScene>
     public GameObject m_parent = null;
     public GameObject WinPanel = null;
     public GameObject LosePanel = null;
+    public GameObject PausePanel = null;
 
     public int m_countX = 10;
     public int m_countY = 10;
@@ -55,6 +56,12 @@ public class InGameScene : Singleton<InGameScene>
 
     private void Start()
     {
+        WinPanel.SetActive(false);
+        LosePanel.SetActive(false);
+        PausePanel.SetActive(false);
+        m_pentagons.Clear();
+        m_hexagons.Clear();
+
         bool isReverse = false;
         bool isIndent = true;
 
@@ -295,13 +302,23 @@ public class InGameScene : Singleton<InGameScene>
         SceneManager.LoadScene("Title");
     }
 
+    public void Win()
+    {
+        WinPanel.SetActive(true);
+    }
+
     public void Lose()
     {
         LosePanel.SetActive(true);
     }
 
-    public void Win()
+    public void Pause()
     {
-        WinPanel.SetActive(true);
+        PausePanel.SetActive(true);
+    }
+
+    public void Restart()
+    {
+        Start();
     }
 }
