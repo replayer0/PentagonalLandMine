@@ -57,7 +57,13 @@ public class LandMineController : MonoBehaviour
     private void OnMouseUp()
     {
         Debug.Log(m_mousePos + " " + Input.mousePosition);
-        if (Input.mousePosition == m_mousePos)
+
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        if (15.0f > Vector3.Distance(Input.mousePosition, m_mousePos))
         {
             Uncover();
         }
