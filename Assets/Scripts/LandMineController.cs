@@ -137,11 +137,18 @@ public class LandMineController : MonoBehaviour
 
     public void Uncover()
     {
-        Cover.SetActive(false);
-
-        if (IsMine)
+        if (Cover.activeInHierarchy)
         {
-            InGameScene.Instance.Lose();
+            Cover.SetActive(false);
+
+            if (IsMine)
+            {
+                InGameScene.Instance.Lose();
+            }
+            else
+            {
+                InGameScene.Instance.UncoverNear();
+            }
         }
     }
 

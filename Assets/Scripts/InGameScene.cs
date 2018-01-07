@@ -28,6 +28,7 @@ public class InGameScene : Singleton<InGameScene>
 
     private Dictionary<KeyValuePair<int, int>, LandMineController> m_pentagons = new Dictionary<KeyValuePair<int, int>, LandMineController>();
     private Dictionary<KeyValuePair<int, int>, LandMineController> m_hexagons = new Dictionary<KeyValuePair<int, int>, LandMineController>();
+    private int m_countAds = 0;
 
     public InGameScene()
     {
@@ -250,7 +251,7 @@ public class InGameScene : Singleton<InGameScene>
         return list;
     }
 
-    private void Update()
+    public void UncoverNear()
     {
         // uncover  hex tile
         foreach (var pair in m_hexagons)
@@ -279,7 +280,10 @@ public class InGameScene : Singleton<InGameScene>
                 }
             }
         }
+    }
 
+    private void Update()
+    {
         // check win
         int checkCount = 0;
         foreach (var pair in m_hexagons)
@@ -300,7 +304,7 @@ public class InGameScene : Singleton<InGameScene>
             }
         }
 
-        if (m_maxMineCount + checkCount == m_hexagons.Count + m_pentagons.Count)
+        if (m_maxMineCount + checkCount + m_countAds == m_hexagons.Count + m_pentagons.Count)
         {
             Win();
         }
@@ -329,6 +333,10 @@ public class InGameScene : Singleton<InGameScene>
     public void Restart()
     {
         Start();
+    }
+
+    public void Continue()
+    {
         ShowAds();
     }
 
@@ -347,7 +355,8 @@ public class InGameScene : Singleton<InGameScene>
         {
             case ShowResult.Finished:
                 Debug.Log("The ad was successfully shown.");
-                // 보상지급
+                LosePanel.SetActive(false);
+                ++m_countAds;
                 break;
             case ShowResult.Skipped:
                 Debug.Log("The ad was skipped before reaching the end.");
