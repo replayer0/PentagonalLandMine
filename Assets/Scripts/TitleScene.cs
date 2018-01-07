@@ -9,8 +9,16 @@ public class TitleScene : MonoBehaviour
     {
         GameManager.Instance.Load();
 	}
-	
-	public void ChangeScene()
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
+
+    public void ChangeScene()
     {
         SceneManager.LoadScene("Stage");
     }

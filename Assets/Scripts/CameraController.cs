@@ -6,12 +6,13 @@ using UnityEngine.EventSystems;
 public class CameraController : Singleton<CameraController>
 {
     // inspector
-    public float m_panSpeed = 15f;
+    public float m_panSpeed = 20f;
 
     //
     private Vector3 m_oldPos = Vector3.zero;
     private Vector3 m_panOrigin = Vector3.zero;
     private bool m_isDragging = false;
+    private float m_totalMoveDistance = 0.0f;
 
     public CameraController()
     {
@@ -41,7 +42,9 @@ public class CameraController : Singleton<CameraController>
             Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition) - m_panOrigin;
             transform.position = m_oldPos + -1 * pos * m_panSpeed;
 
-            if (15.0f < Vector3.Distance(transform.position, m_oldPos))
+            m_totalMoveDistance += Vector3.Distance(transform.position, m_oldPos);
+
+            if (20.0f < m_totalMoveDistance)
             {
                 m_isDragging = true;
             }
@@ -49,6 +52,7 @@ public class CameraController : Singleton<CameraController>
 
         if (Input.GetMouseButtonUp(0))
         {
+            m_totalMoveDistance = 0.0f;
             m_isDragging = false;
         }
     }

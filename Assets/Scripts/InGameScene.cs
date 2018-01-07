@@ -284,6 +284,11 @@ public class InGameScene : Singleton<InGameScene>
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
+        }
+
         // check win
         int checkCount = 0;
         foreach (var pair in m_hexagons)
